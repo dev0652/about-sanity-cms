@@ -1,14 +1,14 @@
 import {defineField, defineType} from 'sanity'
 import {ProjectsIcon, DocumentTextIcon, ImagesIcon} from '@sanity/icons' // https://icons.sanity.build/all
 import {constants} from '../constants'
+import {composeOptionsList, messages, uppercaseFirst} from '../services'
 
-const {types, sizes, res, theme, projTypes} = constants
+const {types, projectTypes} = constants
+const {requiredErrMsg, mustBeInteger, mustBeGreaterThanZero} = messages
+
 const typeName = 'project'
 const groupText = 'text'
 const groupImages = 'images'
-const requiredErrMsg = 'Required'
-const imageReminder = 'Webp, Squoosh optimized (lossless)'
-const versionDark = true
 
 export const projectType = defineType({
   name: typeName,
@@ -38,8 +38,8 @@ export const projectType = defineType({
           .required()
           .error(requiredErrMsg)
           .integer()
-          .error('Must be an integer')
-          .positive('Must be greater than zero'),
+          .error(mustBeInteger)
+          .positive(mustBeGreaterThanZero),
     }),
 
     defineField({
@@ -76,59 +76,73 @@ export const projectType = defineType({
 
     defineField({
       name: 'hasDarkVersion',
-      title: 'has dark version',
+      title: 'Does have a dark version?',
       type: types.boolean,
-      initialValue: false,
+      initialValue: true,
       options: {layout: 'checkbox'},
-      description: 'Whether this image also has a dark version',
-      group: groupText,
-    }),
-
-    defineField({
-      name: 'thumbFileName',
-      type: types.string,
+      description: 'Whether this image also has a dark version (true or false)',
       group: groupText,
     }),
 
     defineField({
       name: 'type',
+      title: 'Project type',
       type: types.string,
-
       options: {
-        list: [projTypes.commercial.en, projTypes.pet.en, projTypes.test.en, projTypes.study.en],
+        list: composeOptionsList(projectTypes),
         layout: 'radio',
       },
-
       group: groupText,
     }),
 
     defineField({
       name: 'stack',
-      type: types.string,
+      type: types.array,
+      of: [{type: types.string}],
       options: {
-        list: ['Front-end', 'Back-end', 'Front-end, Back-end'],
-        layout: 'radio',
+        list: [
+          {title: 'Front-end', value: 'Front-end'},
+          {title: 'Back-end', value: 'Back-end'},
+        ],
       },
-      initialValue: 'Front-end',
+      initialValue: ['Front-end'],
+      group: groupText,
+    }),
+
+    defineField({
+      name: 'isRole',
+      title: 'Whether I had a specific role in this project',
+      type: types.boolean,
+      // options: {layout: 'checkbox'},
+      initialValue: false,
+      description:
+        'If left unchecked, the "role" field will be disabled and its value will default to an empty array',
       group: groupText,
     }),
 
     defineField({
       name: 'role',
-      type: types.object,
-      options: {columns: 2},
-      fields: [
-        {name: 'en', type: types.string, title: 'English'},
-        {name: 'uk', type: types.string, title: 'Ukrainian'},
-      ],
-      initialValue: null,
+      type: types.array,
+      of: [{type: types.string}],
+      options: {
+        list: [
+          {title: 'Team member', value: 'teamMember'},
+          {title: 'Team lead', value: 'teamLead'},
+          {title: 'Repository owner', value: 'repoOwner'},
+        ],
+      },
+      initialValue: [],
+      readOnly: ({document}) => {
+        return document?.isRole === false
+      },
       group: groupText,
     }),
 
     defineField({
       name: 'customer',
       type: types.string,
-      initialValue: null,
+      initialValue: '',
+      description: 'Not required. Can be left blank',
       group: groupText,
     }),
 
@@ -152,48 +166,21 @@ export const projectType = defineType({
       name: 'images',
       title: `Project screenshots`,
       type: types.object,
-      description: imageReminder,
-      fieldsets: [
-        {
-          name: 'imgFieldSet',
-          title: 'Original + deretinized images',
-          options: {collapsible: true, collapsed: false},
-        },
-      ],
+      description: 'PNG, 1920 * 1080, non-optimized',
       fields: [
-        defineField(composeImageField(sizes.large2x)),
-        defineField(composeImageField(sizes.large2x, versionDark)),
-
-        defineField(composeImageField(sizes.large1x)),
-        defineField(composeImageField(sizes.large1x, versionDark)),
-
-        defineField(composeImageField(sizes.medium)),
-        defineField(composeImageField(sizes.medium, versionDark)),
-
-        defineField(composeImageField(sizes.small)),
-        defineField(composeImageField(sizes.small, versionDark)),
+        {
+          name: 'light',
+          title: 'Light image',
+          type: types.image,
+        },
+        {
+          name: 'dark',
+          title: 'Dark image',
+          type: types.image,
+          hidden: ({document}) => document?.hasDarkVersion === false,
+        },
       ],
       group: groupImages,
     }),
   ],
 })
-
-function uppercaseFirst(word) {
-  return word.charAt(0).toUpperCase() + word.substring(1)
-}
-
-function addDarkToName(name) {
-  return name + '_dark'
-}
-
-function composeImageField(size, isDark = false, fieldSet = 'imgFieldSet') {
-  const hiddenIfNoDarkVersion = ({document}) => document?.hasDarkVersion === false
-
-  return {
-    name: isDark ? addDarkToName(sizes[size]) : sizes[size],
-    title: isDark ? `${sizes[size]} (${res[size]}) ${theme.dark}` : sizes[size],
-    type: types.image,
-    fieldset: fieldSet,
-    hidden: isDark ? hiddenIfNoDarkVersion : false,
-  }
-}

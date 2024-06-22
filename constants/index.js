@@ -8,6 +8,7 @@ const types = {
   text: 'text',
   reference: 'reference',
   url: 'url',
+  block: 'block',
 }
 
 const sizes = {
@@ -29,23 +30,27 @@ const theme = {
   dark: 'DARK',
 }
 
-const projTypes = {
+const projectTypes = {
   commercial: {
+    fieldName: 'commercial',
     en: 'Commercial project',
     uk: 'Комерційний проект',
   },
   pet: {
+    fieldName: 'pet',
     en: 'Pet project',
     uk: 'Пет-проект',
   },
   test: {
+    fieldName: 'test',
     en: 'Test',
     uk: 'Тестове завдання',
   },
   study: {
+    fieldName: 'study',
     en: 'Study project',
     uk: 'Навчальний проект',
   },
 }
 
-export const constants = {types, sizes, res, theme, projTypes}
+export const constants = {types, sizes, res, theme, projectTypes}
