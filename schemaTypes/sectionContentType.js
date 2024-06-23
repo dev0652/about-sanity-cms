@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {TranslateIcon, DocumentTextIcon, BlockContentIcon} from '@sanity/icons' // https://icons.sanity.build/all
+import {TranslateIcon} from '@sanity/icons' // https://icons.sanity.build/all
 import {constants} from '../constants'
 import {messages, uppercaseFirst} from '../services'
 

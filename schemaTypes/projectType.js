@@ -71,6 +71,7 @@ export const projectType = defineType({
       type: types.array,
       of: [{type: types.string}],
       initialValue: ['HTML', 'SaSS', 'JavaScript', 'Git'],
+      validation: (rule) => rule.required().error(requiredErrMsg),
       group: groupText,
     }),
 
@@ -92,6 +93,7 @@ export const projectType = defineType({
         list: composeOptionsList(projectTypes),
         layout: 'radio',
       },
+      validation: (rule) => rule.required().error(requiredErrMsg),
       group: groupText,
     }),
 
@@ -180,6 +182,7 @@ export const projectType = defineType({
           hidden: ({document}) => document?.hasDarkVersion === false,
         },
       ],
+      validation: (rule) => rule.required().error(requiredErrMsg),
       group: groupImages,
     }),
   ],
