@@ -1,5 +1,5 @@
 import {defineField, defineType} from 'sanity'
-import {TranslateIcon} from '@sanity/icons' // https://icons.sanity.build/all
+import {BlockContentIcon} from '@sanity/icons' // https://icons.sanity.build/all
 import {constants} from '../constants'
 import {messages, uppercaseFirst} from '../services'
 
@@ -11,7 +11,7 @@ export const sectionContentType = defineType({
   name: typeName,
   title: uppercaseFirst(typeName),
   type: 'document',
-  icon: TranslateIcon,
+  icon: BlockContentIcon,
 
   preview: {
     select: {
