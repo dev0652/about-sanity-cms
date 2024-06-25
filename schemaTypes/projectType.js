@@ -142,7 +142,7 @@ export const projectType = defineType({
       name: 'description',
       type: types.object,
       options: {
-        columns: 2,
+        // columns: 2,
         collapsible: true,
         collapsed: false,
       },
