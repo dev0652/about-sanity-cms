@@ -76,16 +76,6 @@ export const projectType = defineType({
     }),
 
     defineField({
-      name: 'hasDarkVersion',
-      title: 'Does have a dark version?',
-      type: types.boolean,
-      initialValue: true,
-      options: {layout: 'checkbox'},
-      description: 'Whether this image also has a dark version (true or false)',
-      group: groupText,
-    }),
-
-    defineField({
       name: 'type',
       title: 'Project type',
       type: types.string,
@@ -115,7 +105,7 @@ export const projectType = defineType({
       name: 'isRole',
       title: 'Whether I had a specific role in this project',
       type: types.boolean,
-      // options: {layout: 'checkbox'},
+      options: {layout: 'checkbox'},
       initialValue: false,
       description:
         'If left unchecked, the "role" field will be disabled and its value will default to an empty array',
@@ -162,6 +152,16 @@ export const projectType = defineType({
       ],
       group: groupText,
       validation: (rule) => rule.required().error(requiredErrMsg),
+    }),
+
+    defineField({
+      name: 'hasDarkVersion',
+      title: 'Does have a dark version?',
+      type: types.boolean,
+      initialValue: true,
+      options: {layout: 'checkbox'},
+      description: 'Whether this image also has a dark version (true or false)',
+      group: groupText,
     }),
 
     defineField({
